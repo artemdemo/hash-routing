@@ -41,7 +41,9 @@ module hashApp.imageMod {
     /**
      * Current image - index
      */
-    var currentImgID: number;
+    var currentImgID: number = 0;
+
+    enum Direction {prev, next}
 
     /**
      * Load all images
@@ -60,12 +62,36 @@ module hashApp.imageMod {
     }
 
     /**
-     *
-     * @param id
-     * @param animation
+     * Show next image
      */
-    export function showImage ( id:number = 0, animation: boolean = false ) {
-        imagesArr[ id ].$imgLi.className += ' show';
+    export function showNextImage () {
+        if ( ! showImage( currentImgID + 1, Direction.next ) )
+            showImage( 0, Direction.next );
+    }
+
+    /**
+     * Show previous image
+     */
+    export function showPrevImage () {
+        if ( ! showImage( currentImgID - 1, Direction.prev ) )
+            showImage( imagesArr.length - 1, Direction.prev );
+    }
+
+    /**
+     * Show image - general function
+     * @param id
+     * @param direction
+     * @param animation
+     * @return {boolean}
+     */
+    function showImage ( id:number = 0, direction: Direction = Direction.next, animation: boolean = false ) {
+        if ( typeof imagesArr[id] !== 'undefined' ) {
+            helper.removeClass( 'show', imagesArr[currentImgID].$imgLi );
+            helper.addClass( 'show', imagesArr[ id ].$imgLi );
+            currentImgID = id;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -73,7 +99,7 @@ module hashApp.imageMod {
      * @param imageObjID - inner id of the image
      * @returns {any}
      */
-    export function getImageByObjID ( imageObjID: string ) {
+    function getImageByObjID ( imageObjID: string ) {
         for ( var i=0, len=imagesArr.length; i<len; i++ ) {
             var img = imagesArr[i];
             if ( imageObjID == imagesArr[i].imgData.id ) return img;
@@ -81,7 +107,8 @@ module hashApp.imageMod {
         return null
     }
 
-    /**
+
+    /****************************************
      * Image Class
      */
     class imgClass {
