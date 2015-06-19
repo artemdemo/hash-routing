@@ -136,6 +136,7 @@ module hashApp.imageMod {
          */
         onload() {
             $imagesList.appendChild( this.$imgLi );
+            nerve.send('image-loaded');
         }
     }
 }

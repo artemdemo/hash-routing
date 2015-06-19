@@ -5,7 +5,11 @@ module hashApp {
      */
     export function init () {
         imageMod.loadImages();
-        bindEvents()
+        bindEvents();
+
+        nerve.on('image-loaded', function(){
+            console.log('Image loaded');
+        });
     }
 
     /**
