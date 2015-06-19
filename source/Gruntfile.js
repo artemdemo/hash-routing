@@ -64,8 +64,8 @@ module.exports = function(grunt) {
                 tasks: ['shell']
             },
             styles: {
-                files: ['source/less/*.less'],
-                tasks: ['less:development']
+                files: ['less/*.less'],
+                tasks: ['less:development', 'concat_css:development']
             }
         }
     });
