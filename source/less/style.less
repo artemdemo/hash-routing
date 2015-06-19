@@ -1,0 +1,38 @@
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+
+.images-container {
+  width: 692px;
+  height: 700px;
+  margin: 0 auto;
+  padding: 30px 25px;
+  text-align: center;
+  background-color: #DBDBDB;
+  border-radius: 10px;
+
+  .images-list {
+    position: relative;
+    padding: 0;
+    margin: 0;
+    list-style-type: none;
+    width: 650px;
+    height: 640px;
+
+    li {
+      position: absolute;
+      visibility: hidden;
+      left: -1000px;
+
+      &.show {
+        visibility: visible;
+        left: 0;
+      }
+    }
+
+    img { border-radius: 5px; }
+  }
+}
+
