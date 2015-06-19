@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         shell: {
             TypeScript: {
-                command: 'node node_modules/typescript/bin/tsc.js bootstrap.ts --out ../hash-routing.js --sourceMap'
+                command: 'node node_modules/typescript/bin/tsc.js bootstrap.ts --out ../js/hash-routing.js --sourceMap'
             }
         },
         less: {
@@ -25,6 +25,26 @@ module.exports = function(grunt) {
                 }
             }
         },
+        concat_css: {
+            options: {
+                },
+            development: {
+                src: [
+                    'node_modules/bootstrap/dist/css/bootstrap.min.css',
+                    'node_modules/bootstrap/dist/css/bootstrap-theme.min.css',
+                    '../css/style.css'
+                ],
+                dest: '../css/style-prod.css'
+            },
+            prod: {
+                src: [
+                    'node_modules/bootstrap/dist/css/bootstrap.min.css',
+                    'node_modules/bootstrap/dist/css/bootstrap-theme.min.css',
+                    '../css/style.min.css'
+                ],
+                dest: '../css/style-prod.min.css'
+            }
+        },
         uglify: {
             options: {
                 banner: [
@@ -34,13 +54,13 @@ module.exports = function(grunt) {
             },
             prod: {
                 files: {
-                    '../hash-routing.min.js': ['../hash-routing.js']
+                    '../js/hash-routing.min.js': ['../hash-routing.js']
                 }
             }
         },
         watch: {
             scripts: {
-                files: ['**/*.ts', 'source/less/*.less'],
+                files: ['**/*.ts'],
                 tasks: ['shell']
             },
             styles: {
@@ -53,9 +73,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-less');
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-concat-css');
     grunt.loadNpmTasks('grunt-shell');
 
-    grunt.registerTask('default', ['less:development', 'shell', 'watch']);
-    grunt.registerTask('prod', ['less:prod', 'shell', 'uglify:prod']);
+    grunt.registerTask('default', ['less:development', 'concat_css:development', 'shell', 'watch']);
+    grunt.registerTask('prod', ['less:prod', 'concat_css:prod', 'shell', 'uglify:prod']);
 
 };
