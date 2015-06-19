@@ -3,3 +3,5 @@ node_modules
 hash-routing.js
 hash-routing.js.map
 hash-routing.min.js
+
+css/*.css
