@@ -155,7 +155,7 @@ module hashApp.nerve {
      *  Sending a message to all listeners on a channel
         nerve.send('order', {SomeProperty: 'Hello'});
      */
-    export function send ( channel: string, context? ):void;
+    //export function send ( channel: string, context? ):void;
     /**
      * Send message
      * @param channel
@@ -166,7 +166,7 @@ module hashApp.nerve {
      *  Sending a message to listeners on a channel's route
         nerve.send('order', 'created', {SomeProperty: 'Hello'});
      */
-    export function send ( channel: string, route?, context? ):void {
+    export function send ( channel: string, route?: string, context? ):void {
         var r = 'root', ctx = null;
 
         if (arguments.length == 2) {

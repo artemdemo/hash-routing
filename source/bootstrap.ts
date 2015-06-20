@@ -1,5 +1,6 @@
 /// <reference path="modules/hashAppModule.ts" />
 /// <reference path="modules/helperModule.ts" />
+/// <reference path="modules/historyModule.ts" />
 /// <reference path="modules/nerveModule.ts" />
 /// <reference path="modules/imageModule.ts" />
 

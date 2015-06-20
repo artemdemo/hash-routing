@@ -79,6 +79,16 @@ module hashApp.imageMod {
         });
 
         showImage();
+
+        history.init();
+
+        nerve.on('history', 'next', function( state ){
+            showImage( state.id, Direction.next );
+        });
+
+        nerve.on('history', 'prev', function( state ){
+            showImage( state.id, Direction.prev );
+        });
     }
 
     /**
@@ -87,6 +97,8 @@ module hashApp.imageMod {
     export function showNextImage () {
         if ( ! showImage( currentImgID + 1, Direction.next ) )
             showImage( 0, Direction.next );
+
+        history.saveState( String( currentImgID ) );
     }
 
     /**
@@ -96,7 +108,9 @@ module hashApp.imageMod {
         if ( ! showImage( currentImgID - 1, Direction.prev ) )
             showImage( imagesArr.length - 1, Direction.prev );
 
+        history.saveState( String( currentImgID ) );
     }
+
 
     /**
      * Show image - general function
