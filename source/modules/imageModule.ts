@@ -40,6 +40,11 @@ module hashApp.imageMod {
     var currentImgID: number;
 
     /**
+     * Previous image ID - index
+     */
+    var prevImgID: number;
+
+    /**
      * Animation duration
      * @type {number}
      */
@@ -50,6 +55,12 @@ module hashApp.imageMod {
      * @type {boolean}
      */
     var isAnimating: boolean = false;
+
+    /**
+     * Animation timeouts - I need to be able to cancel them
+     * @type {Array}
+     */
+    var animTimeouts: Array<number> = [];
 
     enum Direction {prev, next}
 
@@ -66,6 +77,7 @@ module hashApp.imageMod {
         imagesUrlList.forEach(function( imageData:imgDataObjInterface ){
             imagesArr.push( new imgClass( imageData ) );
         });
+
         showImage();
     }
 
@@ -83,6 +95,7 @@ module hashApp.imageMod {
     export function showPrevImage () {
         if ( ! showImage( currentImgID - 1, Direction.prev ) )
             showImage( imagesArr.length - 1, Direction.prev );
+
     }
 
     /**
@@ -96,9 +109,6 @@ module hashApp.imageMod {
 
         var showOutClass: string,
             showInClass: string;
-
-        // If there is animation in process - stop the function
-        if ( isAnimating === true ) return true;
 
         if ( typeof imagesArr[id] == 'undefined' ) return false;
 
@@ -120,8 +130,6 @@ module hashApp.imageMod {
                 break;
         }
 
-        console.log( showOutClass );
-
 
         // If currentImgID is undefined - that's mean that it is first slide and I need to show it without animation
         // Same for 'animation' @param
@@ -131,36 +139,68 @@ module hashApp.imageMod {
             return true;
         }
 
+        /**
+         * If there is animation in process and user still clicked to change slide
+         * I need to cancel animation and change fast to the next slide
+         */
+        if ( isAnimating === true ) {
+            imagesArr[ currentImgID ].$imgLi.className = 'show';
+            imagesArr[ prevImgID ].$imgLi.className = '';
+
+            clearAllTimeouts();
+            isAnimating = false;
+            return true;
+        }
+
         isAnimating = true;
 
         helper.addClass( showOutClass, imagesArr[ currentImgID ].$imgLi );
 
         // I'm using IIFE, otherwise currentImgID will be changed by the time setTimeout will fire
         (function(currentImgID, id){
-
-            setTimeout(function(){
+            var timerID:number;
+            timerID = setTimeout(function(){
                 helper.removeClass( 'show', imagesArr[ currentImgID ].$imgLi );
                 helper.removeClass( showOutClass, imagesArr[ currentImgID ].$imgLi );
             }, animDuration);
 
+            animTimeouts.push(timerID);
+
             // I'm adding showInRight class faster, case it will feel better for user
-            setTimeout(function(){
+            timerID = setTimeout(function(){
+                var timerID:number;
 
                 helper.addClass( 'show', imagesArr[ id ].$imgLi );
                 helper.addClass( showInClass, imagesArr[ id ].$imgLi );
 
                 // After image has been added I need to remove animation class
-                setTimeout(function(){
+                timerID = setTimeout(function(){
                     helper.removeClass( showInClass, imagesArr[ id ].$imgLi );
                     isAnimating = false;
                 }, animDuration);
 
+                animTimeouts.push(timerID);
+
             }, animDuration / 3 );
+
+            animTimeouts.push(timerID);
 
         })(currentImgID, id);
 
+        prevImgID = currentImgID;
         currentImgID = id;
         return true;
+    }
+
+    /**
+     * Clear all animation timers
+     */
+    function clearAllTimeouts() {
+        animTimeouts.forEach(function( timerID ){
+            clearTimeout(timerID);
+        });
+
+        animTimeouts = [];
     }
 
     /**
