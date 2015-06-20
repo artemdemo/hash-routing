@@ -5,34 +5,73 @@ body {
 
 
 .images-container {
-  width: 692px;
-  height: 700px;
+  max-width: 692px;
   margin: 0 auto;
-  padding: 30px 25px;
-  text-align: center;
-  background-color: #DBDBDB;
-  border-radius: 10px;
 
   .images-list {
     position: relative;
-    padding: 0;
     margin: 0;
+    padding: 0;
+    text-align: center;
+    background-color: #DBDBDB;
+    border-radius: 10px;
     list-style-type: none;
-    width: 650px;
-    height: 640px;
+    width: 700px;
+    height: 700px;
 
     li {
       position: absolute;
-      visibility: hidden;
       left: -1000px;
 
       &.show {
-        visibility: visible;
-        left: 0;
+        left: 30px;
+        top: 30px;
       }
+
+      @anim-duration: 1s;
+
+      &.showInRight {
+        -webkit-animation: show-in-from-right @anim-duration;
+        animation: show-in-from-right @anim-duration;
+      }
+
+      &.showOutLeft {
+        -webkit-animation: show-out-to-left @anim-duration;
+        animation: show-out-to-left @anim-duration;
+      }
+
     }
 
     img { border-radius: 5px; }
   }
 }
 
+@-webkit-keyframes show-in-from-right {
+  0% {
+    left: 200%;
+    transform: scale(1.1);
+  }
+  80% {
+    left: 30px;
+    transform: scale(1.1);
+  }
+  100% {
+    left: 30px;
+    transform: scale(1);
+  }
+}
+
+@-webkit-keyframes show-out-to-left {
+  0% {
+    left: 30px;
+    transform: scale(1);
+  }
+  20% {
+    left: 30px;
+    transform: scale(1.1);
+  }
+  100% {
+    left: -200%;
+    transform: scale(1.1);
+  }
+}

@@ -29,7 +29,7 @@ module hashApp.helper {
      * @returns {HTMLBaseElement}
      */
     export function removeClass( className: string, el: any ): HTMLBaseElement {
-        el.className = el.className.replace(new RegExp('(^|\\b) ' + className + '(\\b|$)', 'gi'), '');
+        el.className = el.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), '');
         return el;
     }
 

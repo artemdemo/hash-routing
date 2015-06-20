@@ -6,10 +6,6 @@ interface imgDataObjInterface {
 module hashApp.imageMod {
     var imagesUrlList: Array<imgDataObjInterface> = [
         {
-            id: '2nzG3RAM',
-            url: 'https://scontent.cdninstagram.com/hphotos-xfa1/t51.2885-15/e15/11378519_476930275817046_1425363243_n.jpg'
-        },
-        {
             id: 'WOlnB0T2',
             url: 'https://scontent.cdninstagram.com/hphotos-xfa1/t51.2885-15/e15/11254004_563635640442480_1205304710_n.jpg'
         },
@@ -41,7 +37,13 @@ module hashApp.imageMod {
     /**
      * Current image - index
      */
-    var currentImgID: number = 0;
+    var currentImgID: number;
+
+    /**
+     * Animation duration
+     * @type {number}
+     */
+    var animDuration: number = 1000;
 
     enum Direction {prev, next}
 
@@ -86,8 +88,36 @@ module hashApp.imageMod {
      */
     function showImage ( id:number = 0, direction: Direction = Direction.next, animation: boolean = false ) {
         if ( typeof imagesArr[id] !== 'undefined' ) {
-            helper.removeClass( 'show', imagesArr[currentImgID].$imgLi );
-            helper.addClass( 'show', imagesArr[ id ].$imgLi );
+            switch ( true ) {
+                case direction == Direction.next:
+
+                    // If currentImgID is undefined - that's mean that it is first slide and I need to show it without animation
+                    if ( typeof currentImgID == 'undefined' ) {
+                        helper.addClass( 'show', imagesArr[ 0 ].$imgLi );
+                        break;
+                    }
+                    helper.addClass( 'showOutLeft', imagesArr[ currentImgID ].$imgLi );
+
+                    // I'm using IIFE, otherwise currentImgID will be changed by the time setTimeout will fire
+                    (function(currentImgID, id){
+                        setTimeout(function(){
+                            helper.removeClass( 'show', imagesArr[ currentImgID ].$imgLi );
+                            helper.removeClass( 'showOutLeft', imagesArr[ currentImgID ].$imgLi );
+                        }, animDuration);
+
+                        // I'm adding showInRight class faster, case it will feel better for user
+                        setTimeout(function(){
+                            helper.addClass( 'show', imagesArr[ id ].$imgLi );
+                            helper.addClass( 'showInRight', imagesArr[ id ].$imgLi );
+                            setTimeout(function(){
+                                helper.removeClass( 'showInRight', imagesArr[ id ].$imgLi );
+                            }, animDuration);
+                        }, animDuration / 3 );
+                    })(currentImgID, id);
+                    break;
+                case direction == Direction.prev:
+                    break;
+            }
             currentImgID = id;
             return true;
         }

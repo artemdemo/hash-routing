@@ -64,6 +64,7 @@ module hashApp.nerve {
                 caller = on;  // caller = arguments.callee;
             }
         } else if (arguments.length == 3 && Object.prototype.toString.call(arguments[2]) == "[object Function]") {
+
             // issue #1: arguments[1] was being checked as the function, but [1] should be the route.
             // issue #1: r was not being set and should be the arguments[1] or route parameter.
             if (Object.prototype.toString.call(arguments[2]) == "[object Function]") {
@@ -85,6 +86,7 @@ module hashApp.nerve {
         }
 
         if ( ! routes.hasOwnProperty(channel) ) {
+
             //--- check on route
             routes[channel] = {};
         }
