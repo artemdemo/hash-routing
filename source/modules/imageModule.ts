@@ -43,7 +43,13 @@ module hashApp.imageMod {
      * Animation duration
      * @type {number}
      */
-    var animDuration: number = 1000;
+    var animDuration: number = 600;
+
+    /**
+     * Determine whether slides are currently animating or not
+     * @type {boolean}
+     */
+    var isAnimating: boolean = false;
 
     enum Direction {prev, next}
 
@@ -86,48 +92,81 @@ module hashApp.imageMod {
      * @param animation
      * @return {boolean}
      */
-    function showImage ( id:number = 0, direction: Direction = Direction.next, animation: boolean = false ) {
-        if ( typeof imagesArr[id] !== 'undefined' ) {
-            switch ( true ) {
-                case direction == Direction.next:
+    function showImage ( id:number = 0, direction: Direction = Direction.next, animation: boolean = true ) {
 
-                    // If currentImgID is undefined - that's mean that it is first slide and I need to show it without animation
-                    if ( typeof currentImgID == 'undefined' ) {
-                        helper.addClass( 'show', imagesArr[ 0 ].$imgLi );
-                        break;
-                    }
-                    helper.addClass( 'showOutLeft', imagesArr[ currentImgID ].$imgLi );
+        var showOutClass: string,
+            showInClass: string;
 
-                    // I'm using IIFE, otherwise currentImgID will be changed by the time setTimeout will fire
-                    (function(currentImgID, id){
-                        setTimeout(function(){
-                            helper.removeClass( 'show', imagesArr[ currentImgID ].$imgLi );
-                            helper.removeClass( 'showOutLeft', imagesArr[ currentImgID ].$imgLi );
-                        }, animDuration);
+        // If there is animation in process - stop the function
+        if ( isAnimating === true ) return true;
 
-                        // I'm adding showInRight class faster, case it will feel better for user
-                        setTimeout(function(){
-                            helper.addClass( 'show', imagesArr[ id ].$imgLi );
-                            helper.addClass( 'showInRight', imagesArr[ id ].$imgLi );
-                            setTimeout(function(){
-                                helper.removeClass( 'showInRight', imagesArr[ id ].$imgLi );
-                            }, animDuration);
-                        }, animDuration / 3 );
-                    })(currentImgID, id);
-                    break;
-                case direction == Direction.prev:
-                    break;
-            }
-            currentImgID = id;
+        if ( typeof imagesArr[id] == 'undefined' ) return false;
+
+        switch ( true ) {
+
+            // animation NEXT
+            case direction == Direction.next:
+
+                showOutClass = 'showOutLeft';
+                showInClass = 'showInRight';
+
+                break;
+
+            // animation PREV
+            case direction == Direction.prev:
+                showOutClass = 'showOutRight';
+                showInClass = 'showInLeft';
+
+                break;
+        }
+
+        console.log( showOutClass );
+
+
+        // If currentImgID is undefined - that's mean that it is first slide and I need to show it without animation
+        // Same for 'animation' @param
+        if ( typeof currentImgID == 'undefined' ) {
+            helper.addClass( 'show', imagesArr[ 0 ].$imgLi );
+            currentImgID = 0;
             return true;
         }
-        return false;
+
+        isAnimating = true;
+
+        helper.addClass( showOutClass, imagesArr[ currentImgID ].$imgLi );
+
+        // I'm using IIFE, otherwise currentImgID will be changed by the time setTimeout will fire
+        (function(currentImgID, id){
+
+            setTimeout(function(){
+                helper.removeClass( 'show', imagesArr[ currentImgID ].$imgLi );
+                helper.removeClass( showOutClass, imagesArr[ currentImgID ].$imgLi );
+            }, animDuration);
+
+            // I'm adding showInRight class faster, case it will feel better for user
+            setTimeout(function(){
+
+                helper.addClass( 'show', imagesArr[ id ].$imgLi );
+                helper.addClass( showInClass, imagesArr[ id ].$imgLi );
+
+                // After image has been added I need to remove animation class
+                setTimeout(function(){
+                    helper.removeClass( showInClass, imagesArr[ id ].$imgLi );
+                    isAnimating = false;
+                }, animDuration);
+
+            }, animDuration / 3 );
+
+        })(currentImgID, id);
+
+        currentImgID = id;
+        return true;
     }
 
     /**
      * Return image object by the given ID
      * @param imageObjID - inner id of the image
-     * @returns {any}
+     * @returns {*}
      */
     function getImageByObjID ( imageObjID: string ) {
         for ( var i=0, len=imagesArr.length; i<len; i++ ) {
